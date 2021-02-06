@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
+import configparser
+
 import MeCab
 import itertools
 from collections import Counter
@@ -18,18 +20,21 @@ from oauth2client.service_account import ServiceAccountCredentials
 from google.cloud import storage
 
 scope = ['https://www.googleapis.com/auth/spreadsheets','https://www.googleapis.com/auth/drive']
-# 久高本番
-SPREADSHEET_KEY = '12j0Yl9_NwYU9AVkj2Fnp_i5gEpBYRoSC_7ri1E_GT8c'
-# 検証
-# SPREADSHEET_KEY = '1yArlN4jpldH7krMB_L_gjNZGQltU7Q09NN37pY1pzj8'
 
-range_ = 'kudaka_survey_DB'+"!AI2:AJ"
+config = configparser.ConfigParser()
+config.read('../config/spreadsheet.ini')
+
+# 久高本番
+SPREADSHEET_KEY = config['BASE']['key']
+
+range_ = config['BASE']['renge']
+bucketName = config['BASE']['bucketName']
 
 # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '../config/client_secrets.json'
 GOOGLE_APPLICATION_CREDENTIALS = '../config/kudaka-island-fbece909e515.json';
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = GOOGLE_APPLICATION_CREDENTIALS
 client = storage.Client()
-bucket = client.get_bucket('kudaka_source')
+bucket = client.get_bucket(bucketName)
 
 mecab = MeCab.Tagger("-Ochasen")
 
